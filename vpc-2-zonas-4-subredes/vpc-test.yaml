@@ -1,0 +1,114 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+
+  TestVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      EnableDnsHostnames: true
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: TestVPC
+
+  TestInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: TestInternetGateway
+
+  TestInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref TestVPC
+      InternetGatewayId: !Ref TestInternetGateway
+
+  TestRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref TestVPC
+      Tags:
+        - Key: Name
+          Value: TestRouteTable1
+
+  TestRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref TestVPC
+      Tags:
+        - Key: Name
+          Value: TestRouteTable2
+
+  TestPublicRoute:
+    DependsOn:
+      - TestInternetGatewayAttachment
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref TestInternetGateway
+      RouteTableId: !Ref TestRouteTable1
+
+  TestSubnet1a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref TestVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-west-1a
+      Tags:
+        - Key: Name
+          Value: TestSubnet1a
+
+  TestSubnet1b:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref TestVPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: us-west-1b
+      Tags:
+        - Key: Name
+          Value: TestSubnet1b
+
+  TestSubnet2a:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref TestVPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: us-west-1a
+      Tags:
+        - Key: Name
+          Value: TestSubnet2a
+
+  TestSubnet2b:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref TestVPC
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: us-west-1b
+      Tags:
+        - Key: Name
+          Value: TestSubnet2b
+
+  TestSubnet1aRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref TestSubnet1a
+      RouteTableId: !Ref TestRouteTable1
+
+  TestSubnet1bRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref TestSubnet1b
+      RouteTableId: !Ref TestRouteTable1
+
+  TestSubnet2aRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref TestSubnet2a
+      RouteTableId: !Ref TestRouteTable2
+      
+  TestSubnet2bRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref TestSubnet2b
+      RouteTableId: !Ref TestRouteTable2
