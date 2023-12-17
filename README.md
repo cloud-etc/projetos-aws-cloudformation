@@ -1,1 +1,1 @@
-Repositório com códigos de vários projetos AWS com ClouFormation
+Repositório com códigos de vários projetos AWS com CloudFormation
